@@ -1,0 +1,45 @@
+{% comment %}
+=====================================================================
+A) BO'SH SARLAVHALAR (3 ta). Bular jamoa a'zosi modallari: JS bosilganda
+   ism yozadi, shungacha H2/H3 bo'sh yoki "—" bo'lib turadi.
+   Teg nomi <div> ga almashadi, class va id saqlanadi, shuning uchun JS ishlayveradi.
+=====================================================================
+{% endcomment %}
+
+{# 1) Bosh sahifa (home.html yoki jamoa bloki include'i) #}
+{# OLDIN:  <h3 class="ht3d-name" id="ht3dName"></h3>                    #}
+<div class="ht3d-name" id="ht3dName" role="heading" aria-level="3"></div>
+
+{# 2) Bosh sahifa jamoa modali #}
+{# OLDIN:  <h2 class="home-team-modal-name" id="htmName">—</h2>           #}
+<div class="home-team-modal-name" id="htmName" role="heading" aria-level="2"></div>
+
+{# 3) /team/ sahifa modali #}
+{# OLDIN:  <h2 class="team-modal-name" id="tmName"></h2>                  #}
+<div class="team-modal-name" id="tmName" role="heading" aria-level="2"></div>
+
+{% comment %}
+CSS: agar stil teg orqali yozilgan bo'lsa (masalan "h2.team-modal-name" yoki ".modal h2"),
+selektorni klassga o'zgartiring: ".team-modal-name { ... }".
+Tez qidirish:  grep -rnE "h[23]\.(ht3d-name|home-team-modal-name|team-modal-name)" static/css
+
+=====================================================================
+B) BOSH SAHIFA TITLE VA OG:TITLE
+   Hozir: title = "AUTOLIGA - rasmiy dilerlik va xizmat ko’rsatish markazlari tarmog’i"
+          og:title = "AUTOLIGA — rasmiy avtosalonlar va servislar tarmog‘i" (+ ortiqcha bo'shliq va qator)
+   Title'da brend nomlari va shahar yo'q, aynan shu so'zlar bilan qidiriladi.
+   Agar title admin'dagi SEO maydonidan olinsa, matnni admin'da o'zgartiring.
+=====================================================================
+{% endcomment %}
+{% load i18n %}
+{% get_current_language as CUR %}
+{% if CUR == 'ru' %}
+  {% firstof "Официальный дилер Jetour, Geely, Soueast, JAC в Ташкенте | AUTOLIGA" as home_title %}
+{% elif CUR == 'en' %}
+  {% firstof "Official Jetour, Geely, Soueast, JAC dealer in Tashkent | AUTOLIGA" as home_title %}
+{% else %}
+  {% firstof "Jetour, Geely, Soueast, JAC rasmiy dileri Toshkentda | AUTOLIGA" as home_title %}
+{% endif %}
+<title>{{ home_title }}</title>
+<meta property="og:title" content="{{ home_title }}">
+<meta name="twitter:title" content="{{ home_title }}">

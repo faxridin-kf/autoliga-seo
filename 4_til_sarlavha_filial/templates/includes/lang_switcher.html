@@ -1,0 +1,32 @@
+{% comment %}
+Til tugmasi. Hozirgi <nav class="language-switcher"> blokini TO'LIQ shu bilan almashtiring.
+Klasslar saytdagi bilan bir xil, CSS o'zgarmaydi.
+
+Nima o'zgardi:
+- O'zbek havolasi endi /set-language/?language=uz&next=... emas, to'g'ridan /products/jetour-t1/.
+  Crawler ru va en sahifalardan uz sahifaga o'ta oladi (/set-language/ robots.txt'da yopiq).
+- Bosilganda django_language cookie'si ham yoziladi, shuning uchun foydalanuvchi uchun
+  hozirgi "tilni eslab qolish" xatti-harakati saqlanadi.
+- rel="nofollow" olib tashlandi.
+{% endcomment %}
+{% load i18n i18n_extra %}
+{% get_current_language as CUR %}
+<nav class="language-switcher" aria-label="{% translate 'Sayt tili' %}">
+  <span class="language-current" tabindex="0">{{ CUR|upper }}</span>
+  <span class="language-arrow" aria-hidden="true">▼</span>
+  <div class="language-dropdown">
+    <a class="language-option{% if CUR == 'uz' %} active{% endif %}" href="{% translate_url request.path 'uz' %}"
+       hreflang="uz" lang="uz" data-lang="uz"{% if CUR == 'uz' %} aria-current="page"{% endif %}>O'zbek</a>
+    <a class="language-option{% if CUR == 'ru' %} active{% endif %}" href="{% translate_url request.path 'ru' %}"
+       hreflang="ru" lang="ru" data-lang="ru"{% if CUR == 'ru' %} aria-current="page"{% endif %}>Русский</a>
+    <a class="language-option{% if CUR == 'en' %} active{% endif %}" href="{% translate_url request.path 'en' %}"
+       hreflang="en" lang="en" data-lang="en"{% if CUR == 'en' %} aria-current="page"{% endif %}>English</a>
+  </div>
+</nav>
+<script>
+  document.querySelectorAll('.language-option[data-lang]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      document.cookie = 'django_language=' + a.dataset.lang + ';path=/;max-age=31536000;SameSite=Lax';
+    });
+  });
+</script>
