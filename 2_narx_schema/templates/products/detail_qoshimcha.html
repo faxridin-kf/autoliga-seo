@@ -1,0 +1,52 @@
+{% comment %}
+templates/products/detail.html dagi O'ZGARISHLAR. Fayl to'liq almashtirilmaydi,
+faqat quyidagi 4 joy o'zgaradi.
+{% endcomment %}
+
+{# 1) Fayl boshida, mavjud {% load ... %} qatoriga qo'shing #}
+{% load seo_schema %}
+
+
+{# 2) <head> dagi meta description: eskisini O'CHIRIB shuni qo'ying #}
+{% block meta_description %}
+<meta name="description" content="{% product_meta_description product %}">
+<meta property="og:description" content="{% product_meta_description product %}">
+{% endblock %}
+
+
+{# 3) Eski Car JSON-LD <script> blokini O'CHIRIB, shu bitta qatorni qo'ying (head yoki body oxiri) #}
+{% car_schema product %}
+
+
+{# 4) Sahifadagi narx bloki: xom "COMFORT (386 500 000)..." matni o'rniga #}
+{% if product.trims.all %}
+<table class="price-table">
+  <thead>
+    <tr><th>Komplektatsiya</th><th>Narx</th><th>Quvvat</th><th>Sarf</th></tr>
+  </thead>
+  <tbody>
+  {% for t in product.trims.all %}
+    <tr>
+      <td>{{ t.name }}</td>
+      <td>{% if t.price %}{{ t.price|som }} so'm{% else %}Narxini so'rang{% endif %}</td>
+      <td>{% if t.power_hp %}{{ t.power_hp }} o.k.{% else %}—{% endif %}</td>
+      <td>{% if t.fuel_l100 %}{{ t.fuel_l100 }} l/100 km{% else %}—{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% if product.price_from %}
+<p class="price-from">Narxi <strong>{{ product.price_from|som }} so'm</strong>dan</p>
+{% endif %}
+{% endif %}
+
+{# 5) FAQ: eski qo'lda yozilgan FAQ blokini shu bilan almashtiring #}
+{% include "includes/faq.html" with faqs=product.faqs.all %}
+
+
+{# --- Slayder va katalog kartochkalari (home.html, products/list.html) --- #}
+{# "COMFORT (386 500 000) PREMIUM(...)" o'rniga:                          #}
+{% if product.price_from %}{{ product.price_from|som }} so'mdan{% else %}Narxini so'rang{% endif %}
+
+{# Ko'p mahsulot chiqadigan view'larda so'rovlar sonini kamaytirish uchun:  #}
+{# Product.objects.prefetch_related("trims", "faqs").select_related("brand") #}

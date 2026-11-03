@@ -1,0 +1,21 @@
+{% comment %}
+templates/includes/faq.html
+Ishlatish:
+  model sahifada:  {% include "includes/faq.html" with faqs=product.faqs.all %}
+  brend sahifada:  {% include "includes/faq.html" with faqs=brand.faqs.all %}
+Sahifadagi matn va schema bir xil manbadan olinadi (Google shuni talab qiladi).
+Model sahifadagi ESKI FAQ blokini (qo'lda yozilgan) shu bilan almashtiring, ikkalasi turmasin.
+{% endcomment %}
+{% load i18n seo_schema %}
+{% if faqs %}
+<section class="faq" id="faq">
+  <h2>{% translate "Ko'p beriladigan savollar" %}</h2>
+  {% for f in faqs %}
+  <details class="faq__item"{% if forloop.first %} open{% endif %}>
+    <summary class="faq__q"><h3>{{ f.question }}</h3></summary>
+    <div class="faq__a">{{ f.answer|linebreaks }}</div>
+  </details>
+  {% endfor %}
+</section>
+{% faq_schema faqs %}
+{% endif %}
